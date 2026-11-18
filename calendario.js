@@ -596,7 +596,9 @@
       .filter(function(e) { return e.end > now; })
       .sort(function(a,b) { return a.start - b.start; })[0] || null;
 
-    var maxRolling = 6; /* poi adattaRighe() toglie quelle che non entrano */
+    /* 3 webinar + il Talk, oppure 4 webinar se non ci sono Talk in programma.
+       adattaRighe() resta come protezione per iframe più bassi. */
+    var maxRolling = activeTalk ? 3 : 4;
 
     var rolling = webinars.concat(qas)
       .filter(function(e) { return e.end > now; })
