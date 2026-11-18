@@ -103,3 +103,8 @@ body { background:transparent; font-family:'WKA Roboto', Roboto, 'Segoe UI', Ari
   background:#fff; overflow:hidden;
   will-change:transform;
 }
+
+/* ── Banner vacanze negli iframe bassi (es. 336 px): illustrazione più corta ── */
+@media (max-height: 400px) {
+  .cal-wrap svg[preserveAspectRatio] { height:110px !important; }
+}
