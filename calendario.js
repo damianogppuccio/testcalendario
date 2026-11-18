@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════
    MOTORE CALENDARIO — NON MODIFICARE QUESTO FILE
    Modificare solo events.js
-   v2.2 — escape HTML, icone SVG inline (zero CDN), validazione orari
+   v3.0 — restyling home: righe adattive all'altezza, piede e stato vuoto con link
    ══════════════════════════════════════════════════════════════════ */
 
 (function(){
@@ -90,25 +90,20 @@
 
     return ''
       + '<a class="ev-row' + rowBg + '" href="' + safeLink(e.link) + '" target="_blank" rel="noopener">'
-      +   '<div class="ev-timeline">'
-      +     '<div class="ev-dot ' + dotClass + '"></div>'
+      +   '<div class="ev-date" aria-hidden="true">'
+      +     '<div class="ev-dd">' + dd + '</div>'
+      +     '<div class="ev-mm">' + mm + '</div>'
       +   '</div>'
-      +   '<div class="ev-content">'
-      +     '<div class="ev-date">'
-      +       '<div class="ev-dd">' + dd + '</div>'
-      +       '<div class="ev-mm">' + mm + '</div>'
+      +   '<div class="ev-info">'
+      +     '<div class="ev-name">' + esc(e.titolo) + '</div>'
+      +     '<div class="ev-time">'
+      +       ICONS.clock(13)
+      +       gg + ' ' + dd + ' ' + mm + ' \u00B7 ' + esc(e.oi) + ' \u2013 ' + esc(e.of)
       +     '</div>'
-      +     '<div class="ev-info">'
-      +       '<div class="ev-name">' + esc(e.titolo) + '</div>'
-      +       '<div class="ev-time">'
-      +         ICONS.clock(12)
-      +         gg + ' \u00B7 ' + esc(e.oi) + ' \u2013 ' + esc(e.of)
-      +       '</div>'
-      +     '</div>'
-      +     b.html
-      +     qaBadge
-      +     '<span class="ev-chevron">' + ICONS.chevron(15) + '</span>'
       +   '</div>'
+      +   b.html
+      +   qaBadge
+      +   '<span class="ev-chevron">' + ICONS.chevron(16) + '</span>'
       + '</a>';
   }
 
@@ -121,7 +116,7 @@
 
     return ''
       + '<a class="talk-row" href="' + safeLink(talk.link) + '" target="_blank" rel="noopener">'
-      +   '<div class="talk-icon">' + ICONS.mic(18) + '</div>'
+      +   '<div class="talk-icon">' + ICONS.mic(20) + '</div>'
       +   '<div class="talk-info">'
       +     '<div class="talk-label">Academy Talk</div>'
       +     '<div class="talk-name">' + esc(talk.titolo) + '</div>'
@@ -264,10 +259,50 @@
   function buildHeader(sottotitolo) {
     return ''
       + '<div class="cal-header">'
-      +   '<div class="cal-title">' + ICONS.calendar(18) + 'Calendario webinar Genya</div>'
-      +   '<div class="cal-accent"></div>'
-      +   '<div class="cal-sub">' + sottotitolo + '</div>'
+      +   '<div class="cal-icon">' + ICONS.calendar(20) + '</div>'
+      +   '<div>'
+      +     '<div class="cal-title">Prossimi webinar</div>'
+      +     '<div class="cal-sub">' + sottotitolo + '</div>'
+      +   '</div>'
       + '</div>';
+  }
+
+  /* ── Link configurabili da diretta.html / indiretta.html ── */
+  function linkCalendario() {
+    return (typeof LINK_CALENDARIO !== 'undefined' && LINK_CALENDARIO) ? LINK_CALENDARIO : '';
+  }
+  function linkTalks() {
+    return (typeof LINK_TALKS !== 'undefined' && LINK_TALKS) ? LINK_TALKS : '';
+  }
+
+  function buildFooter() {
+    var u = linkCalendario();
+    if (!u) return '';
+    return '<div class="cal-footer"><a href="' + safeLink(u) + '" target="_top">Vedi il calendario completo →</a></div>';
+  }
+
+  function buildEmpty() {
+    var u = linkTalks();
+    return ''
+      + '<div class="empty">'
+      +   '<div class="empty-title">Nuove date in arrivo</div>'
+      +   '<div class="empty-text">Al momento non ci sono webinar in calendario. Nel frattempo puoi rivedere gli Academy Talks on demand.</div>'
+      +   (u ? '<a href="' + safeLink(u) + '" target="_top">Rivedi i Talks →</a>' : '')
+      + '</div>';
+  }
+
+  /* Toglie le righe evento che non entrano nell'altezza dell'iframe
+     (così il widget si adatta a 336, 440 o qualsiasi altezza) */
+  function adattaRighe() {
+    var bodies = document.querySelectorAll('.cal-body');
+    for (var i = 0; i < bodies.length; i++) {
+      var body = bodies[i];
+      var rows = body.querySelectorAll('.ev-row');
+      for (var j = rows.length - 1; j > 0; j--) {
+        if (body.scrollHeight <= body.clientHeight + 1) break;
+        rows[j].parentNode.removeChild(rows[j]);
+      }
+    }
   }
 
   /* ── Costruisce l'HTML interno della vista VACANZE ── */
@@ -289,7 +324,7 @@
       .filter(function(e) { return e.end > now; })
       .sort(function(a,b) { return a.start - b.start; })[0] || null;
 
-    var maxRolling = activeTalk ? 5 : 6;
+    var maxRolling = 6; /* poi adattaRighe() toglie quelle che non entrano */
 
     var rolling = webinars.concat(qas)
       .filter(function(e) { return e.end > now; })
@@ -301,8 +336,8 @@
       rows += buildRow(e, now, mostraQa);
     });
 
-    if (!rows && !activeTalk) {
-      rows = '<div class="empty">Nessun webinar in programma</div>';
+    if (!rows) {
+      rows = buildEmpty();
     }
 
     var talkSection = activeTalk
@@ -310,9 +345,10 @@
       : '';
 
     return ''
-      + buildHeader('Prossimi eventi in programma')
+      + buildHeader(mostraQa ? 'Webinar Genya e sessioni di Q&amp;A' : 'Webinar Genya e Academy Talks')
       + '<div class="cal-body">' + rows + '</div>'
-      + talkSection;
+      + talkSection
+      + buildFooter();
   }
 
   /* ── Stato animazione (solo durante le vacanze) ── */
@@ -359,12 +395,14 @@
     outgoing.style.transition = 'transform ' + VAC_SLIDE_MS + 'ms ease';
     incoming.style.transform = 'translateX(0)';
     outgoing.style.transform = 'translateX(' + (fromRight ? '-100%' : '100%') + ')';
+    adattaRighe();
 
     setTimeout(function(){
       /* al termine, incoming diventa l'unico contenuto */
       wrap.innerHTML = '';
       wrap.style.position = '';
       while (incoming.firstChild) { wrap.appendChild(incoming.firstChild); }
+      adattaRighe();
     }, VAC_SLIDE_MS + 30);
   }
 
@@ -405,6 +443,7 @@
           var wrap = document.getElementById('cal').querySelector('.cal-wrap');
           if (wrap && !wrap.querySelector('.cal-slide')) {
             wrap.innerHTML = viewCalendario(now);
+            adattaRighe();
           }
         }
         return;
@@ -421,9 +460,14 @@
     stopVacCycle();
     document.getElementById('cal').innerHTML =
       '<div class="cal-wrap">' + viewCalendario(now) + '</div>';
+    adattaRighe();
   }
 
   render();
+
+  /* Quando il font è caricato o l'iframe cambia altezza, ricalcola le righe */
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function(){ if (!vacPhase) render(); }); }
+  window.addEventListener('resize', function(){ if (!vacPhase) render(); });
 
   /* Aggiorna badge/lista ogni 30 secondi con i dati in memoria */
   setInterval(render, 30000);
