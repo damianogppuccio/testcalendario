@@ -94,5 +94,19 @@
     var btn = document.getElementById('invia');
     btn.disabled = true;
     btn.textContent = 'Invio in corso…';
+    inAttesa = true;
+  });
+
+  // Zoho risponde dentro l'iframe nascosto: quando la risposta arriva, mostra la conferma.
+  var inAttesa = false;
+  document.getElementById('zoho-invio').addEventListener('load', function () {
+    if (!inAttesa) return;
+    inAttesa = false;
+    form.reset();
+    form.hidden = true;
+    cont.textContent = '0/' + MIN_DESCR;
+    inviato.hidden = false;
+    window.scrollTo(0, 0);
+    inviato.focus();
   });
 })();
