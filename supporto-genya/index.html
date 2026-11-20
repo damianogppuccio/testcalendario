@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Supporto Genya · Clienti non certificati</title>
+<link rel="stylesheet" href="stile.css">
+</head>
+<body>
+<main class="sup">
+
+  <!-- Popup: si chiude solo confermando che è il canale giusto -->
+  <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-titolo">
+    <div class="gate__card">
+      <p class="eyebrow">Supporto Genya · Academy</p>
+      <h2 id="gate-titolo">Prima di continuare: è il canale giusto per te?</h2>
+      <h3>Usa questo modulo se</h3>
+      <ul>
+        <li>sei cliente Genya e <strong>non hai ancora completato la certificazione</strong>;</li>
+        <li>hai bisogno di aiuto sull'uso del software Genya.</li>
+      </ul>
+      <h3>Usa un altro canale se</h3>
+      <ul>
+        <li>hai già accesso al canale di assistenza classico: scrivi dal <a href="https://wktaaeu.my.site.com/itcommunity/s/" target="_blank" rel="noopener">portale assistenza abituale</a>;</li>
+        <li>il problema riguarda la piattaforma Academy (accesso, corsi, certificato): usa <a href="https://assistenzaclienti.wkimail.it/landing/assistenzaacademy" target="_blank" rel="noopener">Assistenza Academy</a>.</li>
+      </ul>
+      <p class="lead">Le richieste inviate dal canale sbagliato non possono essere prese in carico.</p>
+      <div class="gate__actions">
+        <button type="button" class="btn" id="gate-ok">Ho capito, vai al modulo</button>
+        <a class="btn btn--ghost" href="https://wksandbox.docebosaas.com/" target="_top">Torna alla home</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="eyebrow">Supporto Genya · Clienti non certificati</p>
+  <h1>Richiedi assistenza su Genya</h1>
+  <p class="lead">Compila il modulo: ti ricontatteremo all'indirizzo e-mail che indichi. Più la richiesta è precisa, più la risposta sarà rapida.</p>
+
+  <div class="done" id="inviato" role="status" tabindex="-1" hidden>
+    <strong>Richiesta inviata.</strong> L'abbiamo ricevuta e ti risponderemo via e-mail. Se non trovi la nostra risposta, controlla anche la cartella spam.
+  </div>
+
+  <p class="note">Hai già accesso al canale di assistenza classico? Scrivi dal <a href="https://wktaaeu.my.site.com/itcommunity/s/" target="_blank" rel="noopener">portale assistenza abituale</a>: la richiesta arriverà al canale corretto.</p>
+
+  <form class="form" id="modulo" name="zsWebToCase_246511000000387857" action="https://desk.zoho.eu/support/WebToCase" method="post" enctype="multipart/form-data" accept-charset="UTF-8" novalidate>
+    <!-- Campi nascosti del modulo Zoho Desk WebToCase (copiati dalla pagina 35) -->
+    <input type="hidden" name="xnQsjsdp" value="edbsnc4e429bc773b23166fd1c0b4d2fcf28b">
+    <input type="hidden" name="xmIwtLD" value="edbsn62fdcb510e8fb40da9452ee6b0e8907018ab270c2d30fe55e80628cd45a4b2c2">
+    <input type="hidden" name="xJdfEaS" value="">
+    <input type="hidden" name="actionType" value="Q2FzZXM=">
+    <input type="hidden" id="property(module)" value="Cases">
+    <input type="hidden" id="dependent_field_values_Cases" value='{"JSON_VALUES":{},"JSON_SELECT_VALUES":{},"JSON_MAP_DEP_LABELS":[]}'>
+    <input type="hidden" name="returnURL" id="returnURL" value="">
+
+    <h2>La tua richiesta</h2>
+    <p class="req-note">I campi con <span aria-hidden="true">*</span> sono obbligatori.</p>
+
+    <div class="errori" id="errori" role="alert" tabindex="-1" hidden></div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="f-nome">Nome <span aria-hidden="true">*</span></label>
+        <input type="text" id="f-nome" name="First Name" maxlength="120" autocomplete="given-name" required>
+        <p class="err" id="f-nome-err"></p>
+      </div>
+      <div class="field">
+        <label for="f-cognome">Cognome <span aria-hidden="true">*</span></label>
+        <input type="text" id="f-cognome" name="Contact Name" maxlength="120" autocomplete="family-name" required>
+        <p class="err" id="f-cognome-err"></p>
+      </div>
+      <div class="field">
+        <label for="f-email">E-mail <span aria-hidden="true">*</span></label>
+        <input type="email" id="f-email" name="Email" maxlength="120" autocomplete="email" required>
+        <p class="err" id="f-email-err"></p>
+      </div>
+      <div class="field">
+        <label for="f-tel">Telefono <span aria-hidden="true">*</span></label>
+        <input type="tel" id="f-tel" name="Phone" maxlength="40" autocomplete="tel" required pattern="[0-9+()\s./-]{6,40}">
+        <p class="err" id="f-tel-err"></p>
+      </div>
+      <div class="field">
+        <label for="f-azienda">Studio o azienda <span aria-hidden="true">*</span></label>
+        <input type="text" id="f-azienda" name="Azienda" maxlength="200" autocomplete="organization" required>
+        <p class="err" id="f-azienda-err"></p>
+      </div>
+      <div class="field">
+        <label for="f-codice">Codice cliente WK <span aria-hidden="true">*</span></label>
+        <input type="text" id="f-codice" name="Codice cliente WK" maxlength="60" required aria-describedby="f-codice-hint">
+        <p class="hint" id="f-codice-hint">Lo trovi nei documenti Wolters Kluwer, ad esempio in fattura.</p>
+        <p class="err" id="f-codice-err"></p>
+      </div>
+      <div class="field field--full">
+        <label for="f-oggetto">Oggetto <span aria-hidden="true">*</span></label>
+        <input type="text" id="f-oggetto" name="Subject" maxlength="255" required>
+        <p class="err" id="f-oggetto-err"></p>
+      </div>
+      <div class="field field--full">
+        <label for="f-descr">Descrizione del problema <span aria-hidden="true">*</span></label>
+        <textarea id="f-descr" name="Description" minlength="50" maxlength="5000" required aria-describedby="f-descr-hint"></textarea>
+        <p class="hint" id="f-descr-hint">Almeno 50 caratteri: indica cosa stavi facendo, in quale funzione di Genya e cosa è successo. <span id="f-descr-cont">0/50</span></p>
+        <p class="err" id="f-descr-err"></p>
+      </div>
+      <div class="field field--full">
+        <label for="f-file">Allegato (facoltativo)</label>
+        <input type="file" id="f-file" name="attachment_1" aria-describedby="f-file-hint">
+        <p class="hint" id="f-file-hint">Ad esempio uno screenshot dell'errore. Massimo 20 MB.</p>
+        <p class="err" id="f-file-err"></p>
+      </div>
+    </div>
+
+    <label class="privacy"><input type="checkbox" id="f-privacy" required> <span>Ho letto l'informativa sul trattamento dei dati personali. [TESTO E LINK DA DEFINIRE CON LEGAL]</span></label>
+    <p class="err" id="f-privacy-err"></p>
+
+    <div class="actions"><button type="submit" class="btn" id="invia">Invia la richiesta</button></div>
+  </form>
+
+</main>
+<script src="modulo.js"></script>
+</body>
+</html>
