@@ -50,9 +50,7 @@
     { id: 'f-descr', msg: 'Descrivi il problema in almeno ' + MIN_DESCR + ' caratteri.',
       test: function (el) { return el.value.trim().length >= MIN_DESCR; } },
     { id: 'f-file', msg: 'L\'allegato supera i 20 MB: scegli un file più piccolo.',
-      test: function (el) { return !el.files.length || el.files[0].size <= MAX_FILE; } },
-    { id: 'f-privacy', msg: 'Per inviare la richiesta conferma di aver letto l\'informativa.',
-      test: function (el) { return el.checked; } }
+      test: function (el) { return !el.files.length || el.files[0].size <= MAX_FILE; } }
   ];
 
   function valido(r, el) {

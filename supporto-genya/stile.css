@@ -34,8 +34,6 @@ input:focus, textarea:focus { border-color: #0769aa; }
 input[type=file] { font: inherit; font-size: 15px; }
 .hint { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: #5f6368; }
 .hint span { font-weight: 700; }
-.privacy { display: flex; align-items: flex-start; gap: 10px; margin: 22px 0 0; font-size: 14px; font-weight: 400; }
-.privacy input { margin-top: 3px; width: 18px; height: 18px; flex: 0 0 18px; }
 .actions { margin: 24px 0 0; }
 
 /* Errori */
