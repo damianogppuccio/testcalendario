@@ -1,4 +1,4 @@
-// Supporto Genya clienti non certificati: popup, controlli del modulo e conferma di invio.
+// Supporto Genya clienti non certificati: popup, controlli del modulo, invio a Zoho e conferma.
 (function () {
   'use strict';
 
@@ -11,30 +11,52 @@
   var box = document.getElementById('errori');
   var descr = document.getElementById('f-descr');
   var cont = document.getElementById('f-descr-cont');
+  var file = document.getElementById('f-file');
+  var fileNome = document.getElementById('f-file-nome');
   var inviato = document.getElementById('inviato');
+  var sink = document.getElementById('zoho-invio');
+  var inAttesa = false;
 
-  // Dopo l'invio Zoho riporta qui con ?inviato=1: niente popup, solo la conferma.
-  var params = new URLSearchParams(window.location.search);
-  if (params.get('inviato') === '1') {
+  function chiudiGate() {
     gate.hidden = true;
+    document.body.classList.remove('gate-aperto');
+  }
+
+  function mostraConferma() {
+    chiudiGate();
+    form.hidden = true;
     inviato.hidden = false;
+    window.scrollTo(0, 0);
     inviato.focus();
+  }
+
+  // Popup aperto all'arrivo, tranne se si torna da un invio (?inviato=1).
+  if (new URLSearchParams(window.location.search).get('inviato') === '1') {
+    mostraConferma();
   } else {
+    document.body.classList.add('gate-aperto');
     gateOk.focus();
   }
 
   gateOk.addEventListener('click', function () {
-    gate.hidden = true;
+    chiudiGate();
     document.getElementById('f-nome').focus();
   });
 
-  // Indirizzo di ritorno: questa stessa pagina, con il segnale di invio avvenuto.
+  // Zoho ignora questo campo e usa l'indirizzo configurato nel modulo: resta come riserva.
   document.getElementById('returnURL').value =
     window.location.origin + window.location.pathname + '?inviato=1';
 
-  descr.addEventListener('input', function () {
+  function aggiornaConta() {
     var n = descr.value.trim().length;
-    cont.textContent = n >= MIN_DESCR ? n + ' caratteri' : n + '/' + MIN_DESCR;
+    var ok = n >= MIN_DESCR;
+    cont.textContent = ok ? n + ' caratteri' : n + '/' + MIN_DESCR;
+    cont.classList.toggle('ok', ok);
+  }
+  descr.addEventListener('input', aggiornaConta);
+
+  file.addEventListener('change', function () {
+    fileNome.textContent = file.files.length ? file.files[0].name : 'Nessun file selezionato';
   });
 
   var regole = [
@@ -45,7 +67,7 @@
     { id: 'f-tel', msg: 'Inserisci un numero di telefono valido (almeno 6 cifre).',
       test: function (el) { return (el.value.match(/[0-9]/g) || []).length >= 6 && el.checkValidity(); } },
     { id: 'f-azienda', msg: 'Inserisci il nome dello studio o dell\'azienda.' },
-    { id: 'f-codice', msg: 'Inserisci il codice cliente WK.' },
+    { id: 'f-codice', msg: 'Inserisci il codice cliente WK: senza non possiamo riconoscerti.' },
     { id: 'f-oggetto', msg: 'Inserisci l\'oggetto della richiesta.' },
     { id: 'f-descr', msg: 'Descrivi il problema in almeno ' + MIN_DESCR + ' caratteri.',
       test: function (el) { return el.value.trim().length >= MIN_DESCR; } },
@@ -53,29 +75,26 @@
       test: function (el) { return !el.files.length || el.files[0].size <= MAX_FILE; } }
   ];
 
-  function valido(r, el) {
-    if (r.test) return r.test(el);
-    return el.value.trim().length > 0;
-  }
-
   function controlla(r) {
     var el = document.getElementById(r.id);
     var err = document.getElementById(r.id + '-err');
-    var ok = valido(r, el);
+    var ok = r.test ? r.test(el) : el.value.trim().length > 0;
     el.setAttribute('aria-invalid', ok ? 'false' : 'true');
-    if (err) {
-      err.textContent = ok ? '' : r.msg;
-      if (ok) el.removeAttribute('aria-errormessage');
-      else { err.id = r.id + '-err'; el.setAttribute('aria-errormessage', err.id); }
-    }
+    if (ok) el.removeAttribute('aria-errormessage');
+    else el.setAttribute('aria-errormessage', err.id);
+    err.textContent = ok ? '' : r.msg;
     return ok;
   }
 
   regole.forEach(function (r) {
     var el = document.getElementById(r.id);
-    var evento = (el.type === 'checkbox' || el.type === 'file') ? 'change' : 'blur';
+    var evento = el.type === 'file' ? 'change' : 'blur';
     el.addEventListener(evento, function () {
       if (el.getAttribute('aria-invalid') !== null || el.value) controlla(r);
+    });
+    // Mentre si corregge un campo segnalato, l'errore sparisce appena il valore va bene.
+    el.addEventListener('input', function () {
+      if (el.getAttribute('aria-invalid') === 'true') controlla(r);
     });
   });
 
@@ -97,16 +116,12 @@
     inAttesa = true;
   });
 
-  // Zoho risponde dentro l'iframe nascosto: quando la risposta arriva, mostra la conferma.
-  var inAttesa = false;
-  document.getElementById('zoho-invio').addEventListener('load', function () {
+  // La risposta di Zoho arriva nell'iframe nascosto: a quel punto la richiesta è stata ricevuta.
+  sink.addEventListener('load', function () {
     if (!inAttesa) return;
     inAttesa = false;
     form.reset();
-    form.hidden = true;
-    cont.textContent = '0/' + MIN_DESCR;
-    inviato.hidden = false;
-    window.scrollTo(0, 0);
-    inviato.focus();
+    aggiornaConta();
+    mostraConferma();
   });
 })();
